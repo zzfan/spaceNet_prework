@@ -1,4 +1,4 @@
-# spaceNet_prework
+# netlink_test
 ```
 1. $ make . 生成netlinkKernel.ko.  
 2. $ gcc netlinkUser.c -o netlinkUser  
