@@ -29,6 +29,7 @@
 #define PORT 42
 #define TTL 23
 #define MESSAGE "azertyuiopqsdf"
+//这个只是为了测试下是否可以制定ipv6地址
 #define SOURCE 0
 
 #ifndef SOL_UDP
@@ -71,6 +72,7 @@ text_of(struct sockaddr *address)
 int
 main(int argc, char **argv)
 {
+    //前面的定义有好多是多余的，不要问我为什么，乱写的
     char            c;
     char            hostname[MAXHOSTNAMELEN + 1];
     char            message[MSGSIZE];
@@ -91,7 +93,7 @@ main(int argc, char **argv)
     verbose_flag = 1;
     v6_flag = 1;
 
-    /* Print any remaining command line arguments (not options).  */
+    //关于选项的，这个是我抄的～～
     strncpy(hostname, argv[optind], MAXHOSTNAMELEN);
     hostname[MAXHOSTNAMELEN] = 0;
 
@@ -102,6 +104,7 @@ main(int argc, char **argv)
 
     /*指定本机ipv6地址，暂时还不知道*/
 
+    //暂时关了
     #ifdef SOURCE
     if (strcmp(source_addr, "") != 0) {
         source = (addrinfo *)malloc(sizeof(struct addrinfo));
@@ -128,8 +131,7 @@ main(int argc, char **argv)
     hints.ai_protocol = IPPROTO_RAW;
     result = (addrinfo *)malloc(sizeof(struct addrinfo));
     status = getaddrinfo(hostname, NULL, &hints_numeric, &result);
-    if (status && status == EAI_NONAME) {       /* It may be a name, but it is
-                                                 * certainly not an address */
+    if (status && status == EAI_NONAME) {       
         status = getaddrinfo(hostname, NULL, &hints, &result);
         if (status) {
             fprintf(stderr, "Nothing found about host name %s\n", hostname);
@@ -149,6 +151,7 @@ main(int argc, char **argv)
         fprintf(stdout, "Connecting to %s...\n", text_of(result->ai_addr));
     }
 
+//关于port的多选项，觉得听麻烦的就没有写多个选项的，自己制定
     if (port == 0) {
         port = PORT;
     }
@@ -157,8 +160,7 @@ main(int argc, char **argv)
         op6.ip.ip6_vfc = 6 << 4;
         op6.ip.ip6_dst = sockaddr6->sin6_addr;
         if (source == NULL) {
-            /* Do nothing. Unfortunately, at least on Linux,I have to set the
-             * source, it is not done automatically (it works on NetBSD) */
+            //不要问我这里为什么是空，因为我也不知道怎么处理
         } else {
             sockaddr6 = (struct sockaddr_in6 *) source->ai_addr;
             op6.ip.ip6_src = sockaddr6->sin6_addr;

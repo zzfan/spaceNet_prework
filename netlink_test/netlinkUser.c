@@ -33,14 +33,15 @@ clock_t start, end;
 
 memset(&src_addr, 0, sizeof(src_addr));
 src_addr.nl_family = AF_NETLINK;
-src_addr.nl_pid = getpid(); /* self pid */
+    //获得pid
+src_addr.nl_pid = getpid(); 
 
 bind(sock_fd, (struct sockaddr*)&src_addr, sizeof(src_addr));
 
 memset(&dest_addr, 0, sizeof(dest_addr));
 memset(&dest_addr, 0, sizeof(dest_addr));
 dest_addr.nl_family = AF_NETLINK;
-dest_addr.nl_pid = 0; /* For Linux Kernel */
+dest_addr.nl_pid = 0; 
 dest_addr.nl_groups = 0; /* unicast */
 
 int buf_num = 0;
@@ -65,6 +66,8 @@ while(buf_num<1024){
     msg.msg_iovlen = 1;
     
     if(!sendmsg(sock_fd,&msg,0)){
+        //这就是我为什么说没有出错，因为一直能发出去而且没报错
+        //不要问我为什么，因为我也不知道
         printf("sendbuf full\n");
     }
 }
@@ -75,6 +78,7 @@ printf("send 1M need: %.0f ms\n", duration*1000);
 
 
 /* Read message from kernel */
+//这里没有写，如果有可以的话可以自己开一个线程来读内核的回复
 #if 0
 recvmsg(sock_fd, &msg, 0);
 printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
