@@ -5,8 +5,6 @@
 	> Created Time: Sun 03 Apr 2016 10:52:04 AM HKT
  ************************************************************************/
 
-/* Sends a UDP packet with raw sockets, to demonstrate their use. 
-*/
 
 #include <stdbool.h>
 #include <stdlib.h>
