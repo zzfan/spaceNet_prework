@@ -4,3 +4,8 @@
 1. netlink内存拷贝1M需要7ms  
 2. raw_socket可以发送，暂时接收不了
 
+>
+这三个需要
+chmod
+chown
+chgrp

@@ -12,4 +12,5 @@
 这样判断有点武断，其实我在内核中可以printf<0>等级的打出来，但是可能会不好，所以等级设置是默认的
 需要自己去内核的<code>/var/log</code>去看下:  
 <code>$grep -rn "Netlink" ./</code>   
+<code>$grep -c "Netlink" file</code>
 看下在哪个文件里面，然后自己用awk和sed处理下
