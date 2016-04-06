@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
 
 #define NETLINK_USER 31
 
@@ -29,7 +30,7 @@ if(sock_fd<0)
 return -1;
 
 FILE *file = fopen("data", "r");
-clock_t start, end;
+ struct timeval start, end;
 
 memset(&src_addr, 0, sizeof(src_addr));
 src_addr.nl_family = AF_NETLINK;
@@ -47,14 +48,16 @@ dest_addr.nl_groups = 0; /* unicast */
 int buf_num = 0;
 fread(buf, sizeof(buf[0]), 1024, file);
 printf("Sending message to kernel\n");
-start = clock();
-while(buf_num<1024){
+//start = clock();
+ gettimeofday(&start, NULL);
+while(buf_num<1024*1024){
     buf_num++;
     nlh = (struct nlmsghdr *)malloc(NLMSG_SPACE(MAX_PAYLOAD));
     memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD));
     nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD);
     nlh->nlmsg_pid = getpid();
-    nlh->nlmsg_flags = 0;
+    nlh->nlmsg_flags = NLM_F_REQUEST;
+	nlh->nlmsg_type = 0x11;
     
     strcpy(NLMSG_DATA(nlh), buf);
     
@@ -70,11 +73,20 @@ while(buf_num<1024){
         //不要问我为什么，因为我也不知道
         printf("sendbuf full\n");
     }
+
+	memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD));
+	recvmsg(sock_fd, &msg, 0);
+	free(nlh);
+	//printf("Received message payload: %s\n", (char *)NLMSG_DATA(nlh));
+	//close(sock_fd);
 }
-end = clock();
+//end = clock();
+ gettimeofday(&end, NULL);
 printf("Waiting for message from kernel\n");
-double duration = (double)(end - start)/CLOCKS_PER_SEC;
-printf("send 1M need: %.0f ms\n", duration*1000);
+ double duration = end.tv_sec - start.tv_sec
+	 + (double)(end.tv_usec - start.tv_usec)/1000000;
+
+printf("1G cost %f s\n", duration);
 
 
 /* Read message from kernel */
